@@ -1,0 +1,257 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'leaflet/dist/leaflet.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-devanagari: var(--font-devanagari);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+}
+
+:root {
+  color-scheme: light;
+  --background:            transparent;
+  --foreground:            #0f2f5a;
+  --card:                  rgba(240, 248, 255, 0.88);
+  --card-foreground:       #0f2f5a;
+  --popover:               rgba(240, 248, 255, 0.96);
+  --popover-foreground:    #0f2f5a;
+  --primary:               #1b6fc8;
+  --primary-foreground:    #ffffff;
+  --secondary:             rgba(219, 234, 254, 0.70);
+  --secondary-foreground:  #1e3a5f;
+  --muted:                 rgba(219, 234, 254, 0.55);
+  --muted-foreground:      #4a7aa8;
+  --accent:                #f5a623;
+  --accent-foreground:     #1e3a5f;
+  --destructive:           #dc2626;
+  --border:                rgba(96, 165, 250, 0.25);
+  --input:                 rgba(219, 234, 254, 0.60);
+  --ring:                  #1b6fc8;
+  --chart-1:               #1b6fc8;
+  --chart-2:               #f5a623;
+  --chart-3:               #22c55e;
+  --chart-4:               #a855f7;
+  --chart-5:               #ef4444;
+  --radius:                0.75rem;
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  body { background: transparent; @apply text-foreground; }
+}
+
+/* ── Component micro-animations (used by weather-experience.tsx) ── */
+.voice-listening     { animation: voice-pulse 1.2s ease-in-out infinite; }
+.chat-sun            { animation: sun-shimmer 2.4s ease-in-out infinite; }
+.chat-cloud          { animation: sky-bob 3s ease-in-out infinite; }
+.weather-brand-icon  { animation: brand-float 3.5s ease-in-out infinite; }
+.brand-sun           { animation: sun-shimmer 2s ease-in-out infinite; }
+.brand-cloud         { animation: sky-bob 2.5s ease-in-out infinite; }
+
+@keyframes brand-float {
+  0%,100% { transform: translateY(0) rotate(-2deg); }
+  50%      { transform: translateY(-5px) rotate(2deg); }
+}
+@keyframes voice-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,.35); }
+  50%      { box-shadow: 0 0 0 9px rgba(220,38,38,0); }
+}
+
+/* ── Sky background animations (used by sky-background.tsx) ── */
+@keyframes sun-shimmer {
+  0%,100% { opacity: .6; transform: scale(1); filter: blur(8px) drop-shadow(0 0 35px rgba(255,210,60,0.6)); }
+  50%      { opacity: 1; transform: scale(1.12); filter: blur(6px) drop-shadow(0 0 55px rgba(255,190,20,0.85)); }
+}
+@keyframes sun-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes sky-bob {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+@keyframes bird-fly {
+  0%   { transform: translate(-15vw, 5vh) scale(.75); }
+  25%  { transform: translate(20vw, 1.5vh) scale(.85) rotate(-3deg); }
+  50%  { transform: translate(55vw, 4.5vh) scale(.9) rotate(2deg); }
+  75%  { transform: translate(85vw, 1vh) scale(.8) rotate(-2deg); }
+  100% { transform: translate(120vw, 6vh) scale(.75); }
+}
+@keyframes grass-wave {
+  0%,100% { transform: skewX(-4deg) scaleY(1);    transform-origin: bottom; }
+  50%      { transform: skewX(4deg)  scaleY(1.03); transform-origin: bottom; }
+}
+@keyframes float-up {
+  0%   { transform: translateY(0) translateX(0) scale(0.6); opacity: 0; }
+  15%  { opacity: .85; }
+  50%  { transform: translateY(-40vh) translateX(24px) scale(1); opacity: .9; }
+  85%  { opacity: .75; }
+  100% { transform: translateY(-85vh) translateX(-18px) scale(0.7); opacity: 0; }
+}
+@keyframes cloud-drift {
+  0%   { transform: translateX(0) translateY(0); opacity: 0; }
+  6%   { opacity: 0.95; }
+  50%  { transform: translateX(50vw) translateY(-7px); }
+  94%  { opacity: 0.95; }
+  100% { transform: translateX(110vw) translateY(3px); opacity: 0; }
+}
+@keyframes wind-streak {
+  0%   { transform: translateX(-30vw) scaleX(.2); opacity: 0; }
+  18%  { opacity: .6; }
+  80%  { opacity: .4; }
+  100% { transform: translateX(120vw) scaleX(1.3); opacity: 0; }
+}
+
+@keyframes cloud-drift-fast {
+  0%   { transform: translateX(0) translateY(0); opacity: 0; }
+  8%   { opacity: 0.95; }
+  50%  { transform: translateX(50vw) translateY(-5px); }
+  92%  { opacity: 0.95; }
+  100% { transform: translateX(110vw) translateY(2px); opacity: 0; }
+}
+@keyframes header-breeze-glow {
+  0%, 100% { opacity: 0.45; transform: scaleX(0.96); }
+  50%      { opacity: 0.85; transform: scaleX(1.03); }
+}
+
+/* ── Realistic Conifer / Pine Tree Wind Animations (Smooth organic wind tilt) ── */
+@keyframes pine-sway-smooth {
+  0%, 100% {
+    transform: rotate(1.8deg) skewX(0.8deg);
+    transform-origin: 50% 100%;
+  }
+  38% {
+    transform: rotate(5.2deg) skewX(2.2deg);
+    transform-origin: 50% 100%;
+  }
+  72% {
+    transform: rotate(2.8deg) skewX(1.2deg);
+    transform-origin: 50% 100%;
+  }
+}
+
+@keyframes pine-needle-rustle {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+    transform-origin: left center;
+  }
+  50% {
+    transform: rotate(4deg) scale(1.02);
+    transform-origin: left center;
+  }
+}
+
+@keyframes leaf-wind-drift {
+  0% {
+    transform: translate(-5vw, 0) rotate(0deg) scale(0.7);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.95;
+  }
+  40% {
+    transform: translate(35vw, -24px) rotate(160deg) scale(1);
+  }
+  75% {
+    transform: translate(75vw, 16px) rotate(320deg) scale(0.88);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(115vw, -8px) rotate(520deg) scale(0.7);
+    opacity: 0;
+  }
+}
+
+/* ── Realistic Meadow Plant Wind Sway ── */
+@keyframes plant-breeze-sway {
+  0%, 100% {
+    transform: rotate(1.2deg) skewX(0.6deg);
+    transform-origin: 50% 100%;
+  }
+  42% {
+    transform: rotate(5.4deg) skewX(2.2deg);
+    transform-origin: 50% 100%;
+  }
+  74% {
+    transform: rotate(2.4deg) skewX(1.0deg);
+    transform-origin: 50% 100%;
+  }
+}
+@keyframes plant-leaf-ripple {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+    transform-origin: 30% 70%;
+  }
+  50% {
+    transform: rotate(5.5deg) scale(1.03);
+    transform-origin: 30% 70%;
+  }
+}
+
+/* ── Utility classes ── */
+.animate-sun-shimmer     { animation: sun-shimmer  3s ease-in-out infinite; }
+.animate-sun-spin        { animation: sun-spin    45s linear      infinite; }
+.animate-bird-fly        { animation: bird-fly        linear      infinite; }
+.animate-grass-wave      { animation: grass-wave  2.2s ease-in-out infinite; }
+.animate-float-up        { animation: float-up      8s ease-in-out infinite; }
+.animate-cloud-drift     { animation: cloud-drift      linear      infinite; }
+.animate-cloud-fast      { animation: cloud-drift-fast 32s linear infinite; }
+.animate-wind-streak     { animation: wind-streak       linear      infinite; }
+.animate-header-glow     { animation: header-breeze-glow 4s ease-in-out infinite; }
+.animate-pine-sway       { animation: pine-sway-smooth 4.8s cubic-bezier(0.42, 0, 0.58, 1) infinite; }
+.animate-pine-rustle     { animation: pine-needle-rustle 2.6s ease-in-out infinite; }
+.animate-plant-sway      { animation: plant-breeze-sway 3.8s cubic-bezier(0.42, 0, 0.58, 1) infinite; }
+.animate-plant-ripple    { animation: plant-leaf-ripple 2.2s ease-in-out infinite; }
+.animate-leaf-drift      { animation: leaf-wind-drift linear infinite; }
+.animate-water-shimmer   { animation: water-shimmer-flow 3.5s ease-in-out infinite; }
+
+@keyframes water-shimmer-flow {
+  0%, 100% {
+    opacity: 0.72;
+    filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.5));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px rgba(125, 211, 252, 0.85));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sun-shimmer, .animate-sun-spin, .animate-bird-fly,
+  .animate-grass-wave, .animate-float-up, .animate-cloud-drift,
+  .animate-cloud-fast, .animate-wind-streak, .animate-header-glow,
+  .voice-listening, .chat-sun, .chat-cloud,
+  .weather-brand-icon, .brand-sun, .brand-cloud { animation: none; }
+}
